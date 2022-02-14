@@ -16,9 +16,10 @@
       </div>
     </div>
     <div class="footer">
-      <button @click="answersVisible = !answersVisible">answer</button>
+      <button @click="closeAnswers(!answersVisible)">answer</button>
       <button @click="restartHandle">restart</button>
-      <button @click="preHandle">pre</button><button @click="nextHandle">next</button>
+      <button @click="preHandle">pre</button>
+      <button @click="nextHandle">next</button>
     </div>
   </div>
 </template>
@@ -72,8 +73,13 @@ var md = markdownIt({
   },
 })
 const current = computed(() => subjects[currentIndex.value])
+
+const closeAnswers = (value = false) => {
+  answersVisible.value = value
+}
+
 const nextHandle = () => {
-  answersVisible.value = false
+  closeAnswers()
   if (currentIndex.value < subjects.length - 1) {
     currentIndex.value++
     setLastQuestion(currentIndex.value)
@@ -81,11 +87,13 @@ const nextHandle = () => {
 }
 
 const restartHandle = () => {
+  closeAnswers()
   currentIndex.value = 0
   setLastQuestion(currentIndex.value)
 }
 
 const preHandle = () => {
+  closeAnswers()
   if (currentIndex.value > 0) {
     currentIndex.value--
     setLastQuestion(currentIndex.value)
