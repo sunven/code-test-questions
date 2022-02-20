@@ -1,13 +1,18 @@
 <template>
   <div class="wrap">
-    <div class="head">{{ currentIndex + 1 }} / {{ subjects.length }}</div>
+    <div class="head">
+      <div class="progress">{{ currentIndex + 1 }} / {{ subjects.length }}</div>
+      <div class="operation">
+        <div @click="useCollection.onCollection(currentIndex)">收藏</div>
+      </div>
+    </div>
     <div class="main">
       <p class="title" v-html="decodeHTML(md.render(current.title))"></p>
       <div class="code">
         <rich-text :nodes="md.render(current.codeMarkdown || '')"></rich-text>
       </div>
       <div class="options">
-        <div v-for="(item, index) in current.options" :key="index" v-html="decodeHTML(md.render(item))"></div>
+        <div class="option" @click="selectAnswer()" v-for="(item, index) in current.options" :key="index" v-html="decodeHTML(md.render(item))"></div>
       </div>
 
       <div class="answers-wrap" v-show="answersVisible">
@@ -33,6 +38,10 @@ import hljs from 'highlight.js'
 import { decodeHTML } from 'entities'
 import 'highlight.js/styles/default.css'
 import Taro from '@tarojs/taro'
+// import { callFunction } from '../../utils/cloudUtil'
+import UseCollection from './useCollection'
+const subject = 'javascript-questions'
+const useCollection = new UseCollection(subject)
 const currentIndex = ref(0)
 Taro.cloud.init({
   env: 'hj1-7842c9',
@@ -45,13 +54,17 @@ Taro.cloud
     // 传递给云函数的event参数
     data: {
       cfntype: 'getLastQuestion',
-      subject: 'javascript-questions',
+      subject,
     },
   })
   .then(({ result: { data } }: any) => {
     const question = data[0]
     question && (currentIndex.value = question.lastindex)
   })
+
+const instance = Taro.getCurrentInstance()
+const a = instance?.router?.params
+console.log(a)
 
 const answersVisible = ref(false)
 // Actual default values
@@ -107,11 +120,13 @@ const setLastQuestion = (lastindex: number) => {
     // 传递给云函数的event参数
     data: {
       cfntype: 'setLastQuestion',
-      subject: 'javascript-questions',
+      subject,
       lastindex,
     },
   })
 }
+
+const selectAnswer = () => {}
 </script>
 
 <style lang="scss">
@@ -121,6 +136,14 @@ const setLastQuestion = (lastindex: number) => {
   flex-flow: column;
   .head {
     margin: 10px 20px;
+    display: flex;
+    .progress {
+      flex: 0 0 25%;
+    }
+    .operation {
+      flex-grow: 1;
+      align-items: flex-end;
+    }
   }
   .main {
     overflow-y: scroll;
@@ -135,6 +158,13 @@ const setLastQuestion = (lastindex: number) => {
     .answers-wrap,
     .explain {
       margin: 20px 0;
+    }
+    .options {
+      .option {
+        line-height: 70px;
+        margin: 20px 0;
+        background-color: darkgrey;
+      }
     }
   }
   .footer {
