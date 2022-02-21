@@ -3,7 +3,10 @@
     <div class="head">
       <div class="progress">{{ currentIndex + 1 }} / {{ subjects.length }}</div>
       <div class="operation">
-        <div @click="useCollection.onCollection(currentIndex)">收藏</div>
+        <div>
+          <button size="mini" @click="onCollection(currentIndex)">{{ currentIsCollection ? '已收藏' : '收藏' }}</button>
+        </div>
+        <div><button size="mini" @click="navigateTo('/pages/question/list')">List</button></div>
       </div>
     </div>
     <div class="main">
@@ -12,7 +15,14 @@
         <rich-text :nodes="md.render(current.codeMarkdown || '')"></rich-text>
       </div>
       <div class="options">
-        <div class="option" @click="selectAnswer()" v-for="(item, index) in current.options" :key="index" v-html="decodeHTML(md.render(item))"></div>
+        <div
+          class="option"
+          :class="{ wrongsel: selIndex === index, truesel: trueIndex === index }"
+          @click="selectAnswer(index)"
+          v-for="(item, index) in current.options"
+          :key="index"
+          v-html="decodeHTML(md.render(item))"
+        ></div>
       </div>
 
       <div class="answers-wrap" v-show="answersVisible">
@@ -21,7 +31,7 @@
       </div>
     </div>
     <div class="footer">
-      <button @click="closeAnswers(!answersVisible)">answer</button>
+      <button @click="answersVisible = !answersVisible">answer</button>
       <button @click="restartHandle">restart</button>
       <button @click="preHandle">pre</button>
       <button @click="nextHandle">next</button>
@@ -31,40 +41,30 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-// import questions from "../../../server/javascript-questions/markdownArr.json";
 import subjects from '../../assets/subjects.json'
 import markdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import { decodeHTML } from 'entities'
 import 'highlight.js/styles/default.css'
 import Taro from '@tarojs/taro'
-// import { callFunction } from '../../utils/cloudUtil'
-import UseCollection from './useCollection'
-const subject = 'javascript-questions'
-const useCollection = new UseCollection(subject)
-const currentIndex = ref(0)
-Taro.cloud.init({
-  env: 'hj1-7842c9',
-})
+import { callFunction } from '@/utils/cloudUtil'
+import { navigateTo } from '@/utils/util'
+import { useCollection, currentIsCollection, onCollection } from '@/use/useCollection'
+import { useWrong, onWrong } from '@/use/useWrong'
+import { useUserStore } from '@/stores/userStore'
 
-Taro.cloud
-  .callFunction({
-    // 要调用的云函数名称
-    name: 'ctq',
-    // 传递给云函数的event参数
-    data: {
-      cfntype: 'getLastQuestion',
-      subject,
-    },
-  })
-  .then(({ result: { data } }: any) => {
-    const question = data[0]
-    question && (currentIndex.value = question.lastindex)
-  })
+const { subject } = useUserStore()
 
 const instance = Taro.getCurrentInstance()
-const a = instance?.router?.params
-console.log(a)
+const params = instance?.router?.params
+const index = +(params?.index || 0)
+
+const currentIndex = ref(index)
+
+// 错题
+useWrong(subject)
+// 收藏
+useCollection(subject, currentIndex)
 
 const answersVisible = ref(false)
 // Actual default values
@@ -87,46 +87,56 @@ var md = markdownIt({
 })
 const current = computed(() => subjects[currentIndex.value])
 
-const closeAnswers = (value = false) => {
+const changeQuestionBefore = (value = false) => {
   answersVisible.value = value
+  selIndex.value = -1
+  trueIndex.value = -1
 }
 
 const nextHandle = () => {
-  closeAnswers()
+  changeQuestionBefore()
   if (currentIndex.value < subjects.length - 1) {
     currentIndex.value++
-    setLastQuestion(currentIndex.value)
+    setLast(currentIndex.value)
   }
 }
 
 const restartHandle = () => {
-  closeAnswers()
+  changeQuestionBefore()
   currentIndex.value = 0
-  setLastQuestion(currentIndex.value)
+  setLast(currentIndex.value)
 }
 
 const preHandle = () => {
-  closeAnswers()
+  changeQuestionBefore()
   if (currentIndex.value > 0) {
     currentIndex.value--
-    setLastQuestion(currentIndex.value)
+    setLast(currentIndex.value)
   }
 }
 
-const setLastQuestion = (lastindex: number) => {
-  Taro.cloud.callFunction({
-    // 要调用的云函数名称
-    name: 'ctq',
-    // 传递给云函数的event参数
-    data: {
-      cfntype: 'setLastQuestion',
-      subject,
-      lastindex,
-    },
+const setLast = (index: number) => {
+  callFunction('ctq', {
+    cfntype: 'setLast',
+    subject,
+    index,
   })
 }
 
-const selectAnswer = () => {}
+// 选项选择
+const selIndex = ref(-1)
+const trueIndex = ref(-1)
+
+const selectAnswer = (index: number) => {
+  selIndex.value = index
+  const answer = current.value.answers[0]
+  trueIndex.value = answer.charCodeAt(0) - 65
+  answersVisible.value = true
+  if (index !== trueIndex.value) {
+    //错题收集
+    onWrong(currentIndex.value)
+  }
+}
 </script>
 
 <style lang="scss">
@@ -135,17 +145,26 @@ const selectAnswer = () => {}
   display: flex;
   flex-flow: column;
   .head {
+    background-color: white;
     margin: 10px 20px;
     display: flex;
     .progress {
+      line-height: 80px;
       flex: 0 0 25%;
     }
     .operation {
       flex-grow: 1;
-      align-items: flex-end;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+      & > div {
+        margin: 10px;
+      }
     }
   }
   .main {
+    // background-color: white;
     overflow-y: scroll;
     flex-grow: 1;
     margin: 40px 20px;
@@ -163,7 +182,13 @@ const selectAnswer = () => {}
       .option {
         line-height: 70px;
         margin: 20px 0;
-        background-color: darkgrey;
+        background-color: white;
+      }
+      .wrongsel {
+        background-color: orangered;
+      }
+      .truesel {
+        background-color: green;
       }
     }
   }

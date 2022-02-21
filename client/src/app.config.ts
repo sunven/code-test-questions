@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  pages: ['pages/javascript-questions/index', 'pages/index/index', 'pages/question/index', 'pages/my/index'],
+  pages: ['pages/index/index', 'pages/question/index', 'pages/question/list', 'pages/javascript-questions/index', 'pages/my/index'],
 
   tabBar: {
     list: [

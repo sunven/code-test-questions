@@ -1,7 +1,6 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
-const { addCollection, delCollection } = require('./collection')
-const { getLastQuestion, setLastQuestion } = require('./lastQuestion')
+const { getLast, setLast } = require('./last')
 const { getCollection, addCollection, delCollection } = require('./collection')
 const { getWrong, addWrong, delWrong } = require('./wrong')
 
@@ -11,10 +10,10 @@ exports.main = async (event, context) => {
   event._openid = wxContext.OPENID
   switch (event.cfntype) {
     // last
-    case 'getLastQuestion':
-      return getLastQuestion(event, context)
-    case 'setLastQuestion':
-      return setLastQuestion(event, context)
+    case 'getLast':
+      return getLast(event, context)
+    case 'setLast':
+      return setLast(event, context)
     // collection
     case 'getCollection':
       return getCollection(event, context)

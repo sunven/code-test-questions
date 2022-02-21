@@ -13,11 +13,16 @@ const getCollection = async (event, context) => {
     .where({
       subject: event.subject,
       _openid: event._openid,
+      index: event.index,
     })
     .get()
 }
 
 const addCollection = async (event, context) => {
+  const { data = [] } = await getCollection(event, context)
+  if (data.length > 0) {
+    return
+  }
   return await collectionCol.add({ data: { _openid: event._openid, subject: event.subject, index: event.index } })
 }
 

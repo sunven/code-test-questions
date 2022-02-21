@@ -1,18 +1,21 @@
 <template>
   <div class="main">
     <div class="progress">
-      <div>1 / 150</div>
+      <div>{{ currentIndex + 1 }} / {{ questions.length }}</div>
     </div>
     <div class="opreation">
-      <div @click="navigateTo('collection')">收藏</div>
-      <div @click="navigateTo('wrong')">错题</div>
+      <div @click="navigateToPages('collection')">收藏</div>
+      <div @click="navigateToPages('wrong')">错题</div>
     </div>
     <div class="next">
       <div>
-        <button @click="navigateTo('javascript-questions')">继续做题</button>
+        <button @click="navigateToPages(subject, { index: currentIndex })">继续做题</button>
       </div>
       <div>
-        <button @click="navigateTo('javascript-questions', { index: 0 })">重新开始</button>
+        <button @click="navigateTo('/pages/question/list', { index: currentIndex })">List</button>
+      </div>
+      <div>
+        <button @click="navigateToPages(subject, { index: 0 })">重新开始</button>
       </div>
     </div>
   </div>
@@ -20,20 +23,18 @@
 
 <script setup lang="ts">
 import { callFunction } from '../../utils/cloudUtil'
-import { navigateTo } from '../../utils/util'
+import { navigateTo, navigateToPages } from '../../utils/util'
 import questions from '../../assets/subjects.json'
-async function abc() {
-  const a = await callFunction('ctq', { cfntype: 'getLastQuestion', subject: 'javascript-questions' })
-  console.log(a)
-}
-abc()
-// callFunction('ctq', { cfntype: 'getLastQuestion', subject: 'javascript-questions' }).then(data => {
-//   console.log(data)
-// })
+import { ref } from 'vue'
+import { useUserStore } from '@/stores/userStore'
 
-function go() {
-  Taro.navigateTo({ url: `/pages/question/index` })
-}
+const { subject } = useUserStore()
+
+const currentIndex = ref(0)
+callFunction('ctq', { cfntype: 'getLast', subject }).then(data => {
+  const question = data[0]
+  question && (currentIndex.value = question.index)
+})
 </script>
 
 <style lang="scss">
@@ -62,6 +63,7 @@ function go() {
   }
   .next {
     div {
+      margin: 20px;
     }
   }
 }

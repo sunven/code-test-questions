@@ -1,10 +1,10 @@
 <template>
   <div class="main">
-    <div class="header">header</div>
+    <div class="header">code test questions</div>
     <div class="body">
       <div class="list">
-        <div v-for="(item, index) in listData" @click="goQuestion(item.title)" class="item">
-          <div class="title">{{ item.title }}</div>
+        <div v-for="(item, index) in listData" :key="index" @click="goQuestion(item.subject)" class="item">
+          <div class="subject">{{ item.subject }}</div>
           <div class="description">{{ item.description }}</div>
         </div>
       </div>
@@ -13,24 +13,48 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import Taro from '@tarojs/taro'
-// import './index.scss'
+<script lang="ts" setup>
+import { navigateToPages } from '@/utils/util'
+import { useUserStore } from '@/stores/userStore'
+
+const userStore = useUserStore()
 
 const listData = [
   {
-    title: 'javascript-questions',
+    subject: 'javascript-questions',
     description: 'https://github.com/lydiahallie/javascript-questions',
   },
 ]
-const goQuestion = title => {
-  Taro.navigateTo({ url: `/pages/question/index` })
+
+const goQuestion = (subject: string) => {
+  userStore.subject = subject
+  navigateToPages('question')
 }
 </script>
 <style lang="scss">
-.taro_page {
-  min-height: 100vh;
-  background: rgba(0, 0, 0, 0.1);
+.main {
+  & > div {
+    margin: 20px;
+    background-color: #fff;
+  }
+  .header {
+    height: 100px;
+    border: 1px solid solid;
+  }
+  .body {
+    .list {
+      .item {
+        border: 1px gray solid;
+        border-radius: 20px;
+        padding: 20px;
+        .subject {
+          font-size: 40px;
+        }
+        .description {
+          font-size: 28px;
+        }
+      }
+    }
+  }
 }
 </style>

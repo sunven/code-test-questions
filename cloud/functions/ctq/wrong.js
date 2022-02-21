@@ -9,15 +9,14 @@ const wrongCol = db.collection('ctq-wrong')
 
 // 创建集合云函数入口函数
 const getWrong = async (event, context) => {
-  return await wrongCol
-    .where({
-      subject: event.subject,
-      _openid: event._openid,
-    })
-    .get()
+  return await wrongCol.where({ subject: event.event, _openid: event._openid, index: event.index }).get()
 }
 
 const addWrong = async (event, context) => {
+  const { data = [] } = await getWrong(event, context)
+  if (data.length > 0) {
+    return
+  }
   return await wrongCol.add({ data: { _openid: event._openid, subject: event.subject, index: event.index } })
 }
 

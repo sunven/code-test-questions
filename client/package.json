@@ -44,6 +44,8 @@
     "entities": "^3.0.1",
     "highlight.js": "^11.4.0",
     "markdown-it": "^12.3.2",
+    "pinia": "^2.0.11",
+    "taro-plugin-pinia": "^1.0.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {

@@ -1855,6 +1855,11 @@
     "@vue/compiler-dom" "3.2.30"
     "@vue/shared" "3.2.30"
 
+"@vue/devtools-api@^6.0.0-beta.21":
+  version "6.0.12"
+  resolved "https://registry.npmmirror.com/@vue/devtools-api/-/devtools-api-6.0.12.tgz#7b57cce215ae9f37a86984633b3aa3d595aa5b46"
+  integrity sha512-iO/4FIezHKXhiDBdKySCvJVh8/mZPxHpiQrTy+PXVqJZgpTPTdHy4q8GXulaY+UKEagdkBb0onxNQZ0LNiqVhw==
+
 "@vue/reactivity-transform@3.2.30":
   version "3.2.30"
   resolved "https://registry.npmmirror.com/@vue/reactivity-transform/-/reactivity-transform-3.2.30.tgz#2006e9f4645777a481b78ae77fc486159afa8480"
@@ -7625,6 +7630,14 @@ pify@^4.0.1:
   resolved "https://registry.npmmirror.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
+pinia@^2.0.11:
+  version "2.0.11"
+  resolved "https://registry.npmmirror.com/pinia/-/pinia-2.0.11.tgz#ff03c714f5e5f16207280a4fc2eab01f3701ee2b"
+  integrity sha512-JzcmnMqu28PNWOjDgEDK6fTrIzX8eQZKPPKvu/fpHdpXARUj1xeVdFi3YFIMOWswqaBd589cpmAMdSSTryI9iw==
+  dependencies:
+    "@vue/devtools-api" "^6.0.0-beta.21"
+    vue-demi "*"
+
 pinkie-promise@^2.0.0:
   version "2.0.1"
   resolved "https://registry.npmmirror.com/pinkie-promise/-/pinkie-promise-2.0.1.tgz#2135d6dfa7a358c069ac9b178776288228450ffa"
@@ -9534,6 +9547,11 @@ taro-css-to-react-native@3.4.1:
     css-mediaquery "^0.1.2"
     postcss-value-parser "^3.3.0"
 
+taro-plugin-pinia@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/taro-plugin-pinia/-/taro-plugin-pinia-1.0.0.tgz#7dee620cc84303a4b4c2df50e649bae72c3b6ac0"
+  integrity sha512-Ip2LTRh7NGsFyEzkZWvU115xDqV3D8cRRbqqw0JKTvzHFBzpwycmrUVQQxV61AMg0r2RJm3mcEbQ997j7xNjtg==
+
 terser-webpack-plugin@^1.4.3:
   version "1.4.5"
   resolved "https://registry.npmmirror.com/terser-webpack-plugin/-/terser-webpack-plugin-1.4.5.tgz#a217aefaea330e734ffacb6120ec1fa312d6040b"
@@ -10110,6 +10128,11 @@ vm2@^3.8.4:
   dependencies:
     acorn "^8.7.0"
     acorn-walk "^8.2.0"
+
+vue-demi@*:
+  version "0.12.1"
+  resolved "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.12.1.tgz#f7e18efbecffd11ab069d1472d7a06e319b4174c"
+  integrity sha512-QL3ny+wX8c6Xm1/EZylbgzdoDolye+VpCXRhI2hug9dJTP3OUJ3lmiKN3CsVV3mOJKwFi0nsstbgob0vG7aoIw==
 
 vue-eslint-parser@^7.10.0:
   version "7.11.0"
