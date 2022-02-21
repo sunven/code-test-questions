@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="page-index-index-main">
     <div class="header">code test questions</div>
     <div class="body">
       <div class="list">
@@ -32,7 +32,7 @@ const goQuestion = (subject: string) => {
 }
 </script>
 <style lang="scss">
-.main {
+.page-index-index-main {
   & > div {
     margin: 20px;
     background-color: #fff;

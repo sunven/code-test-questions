@@ -1,5 +1,13 @@
 export default defineAppConfig({
-  pages: ['pages/index/index', 'pages/question/index', 'pages/question/list', 'pages/javascript-questions/index', 'pages/my/index'],
+  pages: [
+    'pages/index/index',
+    'pages/question/index',
+    'pages/question/list',
+    'pages/wrong/index',
+    'pages/collection/index',
+    'pages/javascript-questions/index',
+    'pages/my/index',
+  ],
 
   tabBar: {
     list: [

@@ -14,11 +14,9 @@ export function useCollection(subject: string, currentIndex?: Ref<number>) {
   })
 }
 
-export const currentIsCollection = !_currentIndex
-  ? false
-  : computed(() => {
-      return isCollection(_currentIndex?.value)
-    })
+export const currentIsCollection = computed(() => {
+  return isCollection(_currentIndex?.value)
+})
 
 function isCollection(index?: number) {
   return !index ? false : _data.value.indexOf(index) !== -1
